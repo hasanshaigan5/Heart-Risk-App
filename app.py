@@ -154,4 +154,4 @@ if st.button("Analyze Patient Data"):
     
     # Scale numericals
     numerical_cols = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
-    input_encoded[numerical_cols] = scaler.transform(input_encoded
+    input_encoded[numerical_cols] = scaler.transform(input_encoded[numerical_cols])
