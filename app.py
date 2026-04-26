@@ -114,7 +114,7 @@ with col3:
     trestbps = st.number_input("Resting Blood Pressure (mm Hg)", min_value=50, max_value=250, value=120)
     fbs = st.selectbox("Fasting Blood Sugar > 120 mg/dl?", options=[1, 0], format_func=lambda x: "Yes" if x == 1 else "No")
 with col4:
-    chol = st.number_input("Serum Cholestoral (mg/dl)", min_value=100, max_value=600, value=200)
+    chol = st.number_input("Serum Cholesterol (mg/dl)", min_value=100, max_value=600, value=200)
     restecg = st.selectbox("Resting ECG Results (0-2)", options=[0, 1, 2])
 
 st.markdown("### 🏃‍♂️ Exercise & Cardiac Data")
