@@ -131,27 +131,46 @@ with col6:
 
 
 # --- PREDICTION LOGIC ---
+# --- PREDICTION LOGIC ---
 if st.button("Analyze Patient Data"):
-    
-    # Structure inputs into dataframe
-    input_data = pd.DataFrame({
-        'age': [age], 'sex': [sex], 'cp': [cp], 'trestbps': [trestbps],
-        'chol': [chol], 'fbs': [fbs], 'restecg': [restecg], 'thalach': [thalach],
-        'exang': [exang], 'oldpeak': [oldpeak], 'slope': [slope], 'ca': [ca], 'thal': [thal]
-    })
-    
-    # List of dummy columns exactly as trained
-    expected_columns = [
-        'age', 'sex', 'trestbps', 'chol', 'fbs', 'thalach', 'exang', 'oldpeak',
-        'cp_1', 'cp_2', 'cp_3', 'restecg_1', 'restecg_2', 'slope_1', 'slope_2',
-        'ca_1', 'ca_2', 'ca_3', 'ca_4', 'thal_1', 'thal_2', 'thal_3'
-    ]
-    
-    # Create dummies
-    categorical_cols = ['cp', 'restecg', 'slope', 'ca', 'thal']
-    input_encoded = pd.get_dummies(input_data, columns=categorical_cols)
-    input_encoded = input_encoded.reindex(columns=expected_columns, fill_value=0)
-    
-    # Scale numericals
-    numerical_cols = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
-    input_encoded[numerical_cols] = scaler.transform(input_encoded[numerical_cols])
+    try:
+        # 1. Structure inputs
+        input_data = pd.DataFrame({
+            'age': [age], 'sex': [sex], 'cp': [cp], 'trestbps': [trestbps],
+            'chol': [chol], 'fbs': [fbs], 'restecg': [restecg], 'thalach': [thalach],
+            'exang': [exang], 'oldpeak': [oldpeak], 'slope': [slope], 'ca': [ca], 'thal': [thal]
+        })
+        
+        expected_columns = [
+            'age', 'sex', 'trestbps', 'chol', 'fbs', 'thalach', 'exang', 'oldpeak',
+            'cp_1', 'cp_2', 'cp_3', 'restecg_1', 'restecg_2', 'slope_1', 'slope_2',
+            'ca_1', 'ca_2', 'ca_3', 'ca_4', 'thal_1', 'thal_2', 'thal_3'
+        ]
+        
+        # 2. Encode
+        categorical_cols = ['cp', 'restecg', 'slope', 'ca', 'thal']
+        input_encoded = pd.get_dummies(input_data, columns=categorical_cols)
+        input_encoded = input_encoded.reindex(columns=expected_columns, fill_value=0)
+        
+        st.info("System Check 1: Data prepared successfully.")
+        
+        # 3. Scale Numericals
+        numerical_cols = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
+        input_encoded[numerical_cols] = scaler.transform(input_encoded[numerical_cols])
+        
+        st.info("System Check 2: Scaling successful.")
+        
+        # 4. Predict
+        prediction = model.predict(input_encoded)
+        
+        st.success(f"System Check 3: Prediction successful! Raw output: {prediction[0]}")
+        
+        # 5. Show Result
+        if prediction[0] == 1:
+            st.error("High Risk Profile Detected")
+        else:
+            st.success("Low Risk Profile")
+
+    except Exception as e:
+        # THIS IS THE TRAP - It will catch the invisible error and print it to the screen
+        st.error(f"🚨 HIDDEN ERROR CAUGHT: {e}")
